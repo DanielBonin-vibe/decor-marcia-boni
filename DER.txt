@@ -1,0 +1,133 @@
+
+USUARIO
+────────────────────────
+id_usuario          PK
+nome
+email               UNIQUE
+senha_hash
+perfil
+ativo
+data_criacao
+data_atualizacao
+
+
+CLIENTE
+────────────────────────
+id_cliente          PK
+nome
+nacionalidade
+estado_civil
+profissao
+cpf                 UNIQUE
+telefone
+email
+endereco
+cidade
+estado
+cep
+ativo
+data_criacao
+data_atualizacao
+
+
+EVENTO
+────────────────────────
+id_evento           PK
+id_cliente          FK → CLIENTE
+tipo_evento
+data_evento
+horario_evento
+nome_local
+endereco_local
+numero_convidados
+status
+observacoes
+drive_folder_id
+data_criacao
+data_atualizacao
+
+
+PROPOSTA
+────────────────────────
+id_proposta          PK
+id_evento            FK → EVENTO
+versao
+titulo
+descricao
+valor_decoracao
+valor_iluminacao
+valor_adicionais
+valor_total
+condicao_pagamento
+status
+data_criacao
+data_atualizacao
+
+
+ITEM_PROPOSTA
+────────────────────────
+id_item_proposta     PK
+id_proposta          FK → PROPOSTA
+nome
+descricao
+quantidade
+categoria
+opcional
+ordem
+
+
+CONTRATO
+────────────────────────
+id_contrato          PK
+id_evento            FK → EVENTO
+id_proposta          FK → PROPOSTA
+numero               UNIQUE
+valor_total
+data_assinatura
+status
+data_criacao
+data_atualizacao
+
+
+PARCELA
+────────────────────────
+id_parcela           PK
+id_contrato          FK → CONTRATO
+numero
+valor
+data_vencimento
+status
+data_criacao
+data_atualizacao
+
+
+PAGAMENTO
+────────────────────────
+id_pagamento         PK
+id_parcela           FK → PARCELA
+valor
+data_pagamento
+forma_pagamento
+observacao
+data_criacao
+
+
+RECIBO
+────────────────────────
+id_recibo            PK
+id_pagamento         FK → PAGAMENTO
+numero               UNIQUE
+data_emissao
+data_criacao
+
+
+DOCUMENTO
+────────────────────────
+id_documento         PK
+id_evento            FK → EVENTO
+tipo
+versao
+nome_arquivo
+drive_file_id
+drive_url
+data_geracao
