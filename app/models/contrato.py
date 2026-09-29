@@ -18,10 +18,10 @@ class Contrato(Base):
 
     valor_total: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
 
-    data_assinatura: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    data_assinatura: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     status: Mapped[str] = mapped_column(String(100), nullable=False)
 
     data_criacao: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
 
-    data_atualizacao: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    data_atualizacao: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())

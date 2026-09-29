@@ -16,9 +16,9 @@ class Pagamento(Base):
 
     data_pagamento: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
 
-    forma_pagamento: Mapped[str] = mapped_column(String[50], nullable=False)
+    forma_pagamento: Mapped[str] = mapped_column(String(50), nullable=False)
 
-    observacoes: Mapped[str] = mapped_column(String(1000) | None, nullable=False)
+    observacoes: Mapped[str | None] = mapped_column(String(1000), nullable=True)
 
     data_criacao: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
 

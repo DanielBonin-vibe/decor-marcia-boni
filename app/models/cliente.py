@@ -12,7 +12,7 @@ class Cliente(Base):
 
     nacionalidade: Mapped[str | None] = mapped_column(String(150), nullable=True)
 
-    estado_civi: Mapped[str | None] = mapped_column(String(150), nullable=True)
+    estado_civil: Mapped[str | None] = mapped_column(String(150), nullable=True)
 
     profissao: Mapped[str | None] = mapped_column(String(150), nullable=True)
 

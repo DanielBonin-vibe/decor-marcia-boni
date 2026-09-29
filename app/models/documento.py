@@ -17,8 +17,8 @@ class Documento(Base):
 
     nome_arquivo: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    drive_file_id: Mapped[str] = mapped_column(String, nullable=False)
+    drive_file_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
-    drive_url: Mapped[str] = mapped_column(String, nullable=False)
+    drive_url: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
     data_geracao: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())

@@ -11,7 +11,7 @@ class Recibo(Base):
 
     id_pagamento: Mapped[int] = mapped_column(Integer, ForeignKey('pagamento.id_pagamento'), nullable=False)
 
-    numero_pagamento: Mapped[int] = mapped_column(Integer, unique=True, nullable=False)
+    numero_recibo: Mapped[int] = mapped_column(Integer, unique=True, nullable=False)
 
     data_emissao: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
 

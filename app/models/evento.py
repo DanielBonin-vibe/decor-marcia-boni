@@ -19,15 +19,15 @@ class Evento(Base):
 
     nome_local: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    endereco_local: Mapped[str] = mapped_column(String(500), unique=True, nullable=False) 
+    endereco_local: Mapped[str] = mapped_column(String(500), nullable=False) 
 
     numero_convidados: Mapped[int] = mapped_column(Integer, nullable=False)
 
     status: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    observacoes: Mapped[str] = mapped_column(String(1000) | None, nullable=False)
+    observacoes: Mapped[str | None] = mapped_column(String(1000), nullable=True)
 
-    drive_folder_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    drive_folder_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
     data_criacao: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
 

@@ -16,7 +16,7 @@ class Proposta(Base):
 
     titulo: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    observacoes: Mapped[str] = mapped_column(String(1000) | None, nullable=False)
+    observacoes: Mapped[str | None] = mapped_column(String(1000), nullable=True)
 
     valor_decoracao: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
 

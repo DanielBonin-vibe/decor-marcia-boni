@@ -9,7 +9,7 @@ class Usuario(Base):
 
     id_usuario: Mapped[int] = mapped_column(primary_key=True)
 
-    nome: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
+    nome: Mapped[str] = mapped_column(String(100), nullable=False)
 
     email: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
 
