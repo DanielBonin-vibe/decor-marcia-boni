@@ -25,7 +25,7 @@ class Evento(Base):
 
     status: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    observacoes: Mapped[str] = mapped_column(String(1000), nullable=False)
+    observacoes: Mapped[str] = mapped_column(String(1000) | None, nullable=False)
 
     drive_folder_id: Mapped[int] = mapped_column(Integer, nullable=False)
 

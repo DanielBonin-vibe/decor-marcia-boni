@@ -118,7 +118,6 @@ id_recibo            PK
 id_pagamento         FK → PAGAMENTO
 numero               UNIQUE
 data_emissao
-data_criacao
 
 
 DOCUMENTO
