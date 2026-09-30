@@ -11,7 +11,7 @@ class Evento(Base):
 
     id_cliente: Mapped[int] = mapped_column(Integer, ForeignKey('cliente.id_cliente'), nullable=False)
 
-    tipo_evento: Mapped[str] = mapped_column(String, nullable=False)
+    tipo_evento: Mapped[str] = mapped_column(String(100), nullable=False)
 
     data_evento: Mapped[datetime] = mapped_column(Date, nullable=False)
 
