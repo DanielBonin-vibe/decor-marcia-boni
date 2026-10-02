@@ -70,7 +70,7 @@ class EventoRepository:
         return evento
 
     def atualizar_status_evento(self, id_evento: int, status):
-        evento = self.buscar_evento_por_status(int)
+        evento = self.buscar_evento_por_status(id_evento)
 
         if evento is None:
             return None
