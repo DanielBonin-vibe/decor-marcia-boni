@@ -1,7 +1,7 @@
 from datetime import datetime 
 from decimal import Decimal
 
-from sqlalchemy import String, Integer, Boolean, Numeric, ForeignKey, DateTime, func
+from sqlalchemy import String, Integer, Numeric, ForeignKey, DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column
 from app.core.database import Base
 
