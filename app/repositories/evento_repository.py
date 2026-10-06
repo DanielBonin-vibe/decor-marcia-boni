@@ -69,7 +69,7 @@ class EventoRepository:
 
         return evento
 
-    def atualizar_status_evento(self, id_evento: int, status):
+    def atualizar_status_evento(self, id_evento: int, status: str):
         evento = self.buscar_evento_por_status(id_evento)
 
         if evento is None:
@@ -82,7 +82,7 @@ class EventoRepository:
 
         return evento
 
-    def atualizar_driver_folder_id(self, id_evento: int, drive_folder_id: str):
+    def atualizar_drive_folder_id(self, id_evento: int, drive_folder_id: str):
         evento = self.buscar_evento_por_id(id_evento)
 
         if evento is None:
