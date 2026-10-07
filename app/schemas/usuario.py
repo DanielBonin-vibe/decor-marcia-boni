@@ -9,7 +9,7 @@ class UsuarioCreate(BaseModel):
     senha: str = Field(min_length=8, max_length=100)
     perfil: str = Field(min_length=3,max_length=100)
 
-class UuarioUpdate(BaseModel):
+class UsuarioUpdate(BaseModel):
     nome: str | None = Field(default=None,min_length=3, max_length=100)
     email: EmailStr | None = None
     senha: str | None = Field(default=None, min_length=8, max_length=100)
