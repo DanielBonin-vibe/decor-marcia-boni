@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 
 from app.schemas.documento import DocumentoCreate, DocumentoUpdate
 from app.models import Documento
@@ -12,9 +13,13 @@ class DocumentoRepository:
         documento = Documento(**dados.model_dump())
 
         self.db.add(documento)
-        self.db.commit()
-        self.db.refresh(documento)
+        try:
+            self.db.commit()
+        except IntegrityError:
+            self.db.rollback()
+            raise
 
+        self.db.refresh(documento)
         return documento
 
     def buscar_documento_por_id(self, id_documento: int):
@@ -63,9 +68,13 @@ class DocumentoRepository:
         for campo, valor in atualizacao_documento.items():
             setattr(documento, campo, valor)
 
-        self.db.commit()
-        self.db.refresh(documento)
+        try:
+            self.db.commit()
+        except IntegrityError:
+            self.db.rollback()
+            raise
 
+        self.db.refresh(documento)
         return documento
 
     def atualizar_dados_drive(self, id_documento: int, drive_file_id: str, drive_url: str):
@@ -77,7 +86,13 @@ class DocumentoRepository:
         documento.drive_file_id = drive_file_id
         documento.drive_url = drive_url
 
-        self.db.commit()
-        self.db.refresh(documento)
 
+        try:
+            self.db.commit()
+        except IntegrityError:
+            self.db.rollback()
+            raise
+
+        self.db.refresh(documento)
         return documento
+
