@@ -1,6 +1,6 @@
 from app.schemas.usuario import UsuarioCreate, UsuarioUpdate
 from app.repositories.usuario_repository import UsuarioRepository
-from app.security.hash import gerar_hash
+# from app.security.hash import gerar_hash
 
 class UsuarioService:
     def __init__(self, repository: UsuarioRepository):

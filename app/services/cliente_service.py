@@ -9,10 +9,12 @@ class ClienteService:
         cliente_cpf = self.repository.buscar_cliente_por_cpf(dados.cpf)
 
         if cliente_cpf is not None:
-            raise ValueError('CPF já cadastrado.') 
+            raise ValueError('CPF já cadastrado.')
+        
 
+        email_normalizado = str(dados.email).strip().lower()
 
-        cliente_email = self.repository.buscar_cliente_por_email(dados.email)
+        cliente_email = self.repository.buscar_cliente_por_email(email_normalizado)
 
         if cliente_email is not None:
             raise ValueError('Email já cadastrado.')
@@ -23,6 +25,8 @@ class ClienteService:
         if cliente_telefone is not None:
             raise ValueError('Telefone já cadastrado.')
         
+
+        dados = dados.model_copy(update={'email': email_normalizado})
 
         return self.repository.criar_cliente(dados)
 
@@ -72,6 +76,32 @@ class ClienteService:
 
         if cliente is None:
             raise ValueError('Cliente não encontrado.')
+        
+
+        if dados.cpf  is not None:
+            cpf_cliente = self.repository.buscar_cliente_por_cpf(dados.cpf)
+
+            if cpf_cliente is not None and cpf_cliente.id_cliente != cliente.id_cliente:
+                raise ValueError('O CPF infromado já está vinculado a outro cliente.')
+
+
+        if dados.telefone is not None:
+            telefone_cliente = self.repository.buscar_cliente_por_telefone(dados.telefone)
+
+            if telefone_cliente is not None and telefone_cliente.id_cliente != cliente.id_cliente:
+                raise ValueError('O telefone informado já está vinculado a outro cliente.')
+
+        
+        if dados.email is not None:
+            email_normalizado = str(dados.email).strip().lower()
+
+            cliente_email = self.repository.buscar_cliente_por_email(email_normalizado)
+
+            if cliente_email is not None and cliente_email.id_cliente != cliente.id_cliente:
+                raise ValueError('Email já cadastrado por outro cliente.')
+
+            dados = dados.model_copy(update={"email": email_normalizado})
+
 
         return self.repository.atualizar_cliente(cpf, dados)
 

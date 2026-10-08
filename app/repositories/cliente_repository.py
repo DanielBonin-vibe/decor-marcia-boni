@@ -1,7 +1,9 @@
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 from app.schemas.cliente import ClienteCreate, ClienteUpdate
 from app.models import Cliente
+
+from sqlalchemy.exc import IntegrityError
 
 class ClienteRepository:
     def __init__(self, db: Session):
@@ -31,7 +33,7 @@ class ClienteRepository:
         return resultado.scalar_one_or_none()
 
     def buscar_cliente_por_email(self, email: str):
-        consulta = select(Cliente).where(Cliente.email == email)
+        consulta = select(Cliente).where(func.lower(Cliente.email) == email.lower())
 
         resultado = self.db.execute(consulta)
 
@@ -62,9 +64,14 @@ class ClienteRepository:
         for campo, valor in dados_atualizacao.items():
             setattr(cliente, campo, valor)
 
-        self.db.commit()
-        self.db.refresh(cliente)
+        try:
+            self.db.commit()
 
+        except IntegrityError:
+            self.db.rollback()
+            raise
+
+        self.db.refresh(cliente)
         return cliente
 
     def desativar_cliente(self, cpf: str):
