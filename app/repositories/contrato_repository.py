@@ -1,9 +1,10 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from datetime import datetime
+from sqlalchemy.exc import IntegrityError
 
 from app.schemas.contrato import ContratoCreate, ContratoUpdate
-from app.models import Contrato
+from app.models import Contrato, Proposta
 
 class ContratoRepository:
     def __init__(self, db: Session):
@@ -13,9 +14,14 @@ class ContratoRepository:
         contrato = Contrato(**dados.model_dump())
 
         self.db.add(contrato)
-        self.db.commit()
-        self.db.refresh(contrato)
 
+        try:
+            self.db.commit()
+        except IntegrityError:
+            self.db.rollback()
+            raise
+
+        self.db.refresh(contrato)
         return contrato
 
     def buscar_contrato_por_id(self, id_contrato: int):
@@ -26,14 +32,14 @@ class ContratoRepository:
         return resultado.scalar_one_or_none()
 
     def buscar_contrato_por_numero(self, numero: str):
-        consulta = select(Contrato).where(Contrato.numero == numero)
+        consulta = select(Contrato).join(Contrato.numero == numero)
 
         resultado = self.db.execute(consulta)
 
         return resultado.scalar_one_or_none()
 
     def buscar_contratos_por_evento(self, id_evento: int):
-        consulta = select(Contrato).where(Contrato.id_evento == id_evento)
+        consulta = select(Contrato).join(Proposta,Contrato.id_proposta == Proposta.id_proposta).where(Proposta.id_evento == id_evento)
 
         resultado = self.db.execute(consulta)
 
@@ -75,7 +81,7 @@ class ContratoRepository:
         if contrato is None:
             return None
 
-        contrato.status = status
+        contrato.status_contrato = status
 
         self.db.commit()
         self.db.refresh(contrato)
@@ -89,8 +95,13 @@ class ContratoRepository:
             return None
 
         contrato.data_assinatura = data_assinatura 
+        contrato.status_contrato = 'assinado'
 
-        self.db.commit()
+        try:
+            self.db.commit()
+        except IntegrityError:
+            self.db.rollback()
+            raise
+        
         self.db.refresh(contrato)
-
         return contrato

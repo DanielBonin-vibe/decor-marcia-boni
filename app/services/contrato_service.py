@@ -1,22 +1,27 @@
 from app.schemas.contrato import ContratoCreate, ContratoUpdate
 from app.repositories.contrato_repository import ContratoRepository
+from app.repositories.proposta_repository import PropostaRepository
 from datetime import datetime
 
+STATUS_PERMITIDOS = {'rascunho', 'assinado', 'pendente_assinatura', 'cancelado'}
+
 class ContratoService:
-    def __init__(self, repository: ContratoRepository):
+    def __init__(self, repository: ContratoRepository, proposta_repository: PropostaRepository):
         self.repository = repository
+        self.proposta_repository = proposta_repository
 
     def criar_contrato(self, dados: ContratoCreate):
-        contrato_evento = self.repository.buscar_contratos_por_evento(dados.id_evento)
+        proposta = self.proposta_repository.buscar_proposta_por_id(dados.id_proposta)
 
-        if contrato_evento:
-            raise ValueError('Já existe contrato vinculado a este evento.')
+        if proposta is None:
+            raise ValueError('Proposta não encontrada.')
 
 
-        contrato_proposta = self.repository.buscar_contratos_por_proposta(dados.id_proposta)
+        contratos_proposta = self.repository.buscar_contratos_por_proposta(dados.id_proposta)
 
-        if contrato_proposta:
-            raise ValueError ('Já existe contrato vinculado a esta proposta.')
+        if contratos_proposta:
+            raise ValueError("Já existe contrato vinculado a esta proposta.")
+        
 
         contrato_numero = self.repository.buscar_contrato_por_numero(dados.numero)
 
@@ -59,12 +64,7 @@ class ContratoService:
         return contratos
 
     def listar_contratos(self):
-        contratos = self.repository.listar_contratos()
-
-        if not contratos:
-            raise ValueError('Não foi possível localizar nenhum contrato.')
-
-        return contratos
+        return self.repository.listar_contratos()
 
     def atualizar_contrato(self, id_contrato: int, dados: ContratoUpdate):
         contrato = self.repository.buscar_contrato_por_id(id_contrato)
@@ -80,6 +80,9 @@ class ContratoService:
         if contrato is None:
             raise ValueError('Não foi possível localizar nenhum contrato.')
 
+        if status not in STATUS_PERMITIDOS:
+            raise ValueError('Status de contrato inválido.')
+
         return self.repository.atualizar_status_contrato(id_contrato, status)
 
     def registrar_assinatura(self, id_contrato: int, data_assinatura: datetime):
@@ -88,4 +91,7 @@ class ContratoService:
         if contrato is None:
             raise ValueError('Não foi possível localizar nenhum contrato.')
 
+        if contrato.status_contrato != 'pendente_assinatura':
+            raise ValueError('Somente contratos pendentes de assinatura podem ser assinados.')
+                             
         return self.repository.registrar_assinatura(id_contrato, data_assinatura)
