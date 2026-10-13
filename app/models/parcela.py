@@ -1,12 +1,24 @@
 from datetime import datetime, date
 from decimal import Decimal 
 
-from sqlalchemy import String, Integer, ForeignKey, DateTime, Date, Numeric, func
+from sqlalchemy import String, Integer, ForeignKey, DateTime, Date, Numeric, func, CheckConstraint, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 from app.core.database import Base
 
 class Parcela(Base):
     __tablename__ = 'parcela'
+
+    __table_args__ = (
+
+        CheckConstraint("numero_parcela > 0", name='ck_numero_parcela_valida'),
+
+        CheckConstraint("valor > 0", name='ck_valor_parcela_valido'),
+
+        CheckConstraint("status IN ('paga', 'cancelada', 'atrasada', 'pendente', 'parcialmente_paga')", name='ck_status_validos'),
+
+        UniqueConstraint('id_contrato', 'numero_parcela', name='uq_parcela_contrato_numero')
+
+    )
 
     id_parcela: Mapped[int] = mapped_column(primary_key=True)
 
@@ -18,7 +30,7 @@ class Parcela(Base):
 
     data_vencimento: Mapped[date] = mapped_column(Date, nullable=False)
 
-    status: Mapped[str] = mapped_column(String(100), nullable=False)
+    status: Mapped[str] = mapped_column(String(100), nullable=False, server_default='pendente')
 
     data_criacao: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
 
