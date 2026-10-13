@@ -1,5 +1,6 @@
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from datetime import date
 from app.schemas.pagamento import PagamentoCreate, PagamentoUpdate
 from app.models import Pagamento
@@ -12,9 +13,15 @@ class PagamentoRepository:
         pagamento = Pagamento(**dados.model_dump())
 
         self.db.add(pagamento)
-        self.db.commit()
-        self.db.refresh(pagamento)
 
+        try:
+            self.db.commit()
+
+        except IntegrityError:
+            self.db.rollback()
+            raise
+
+        self.db.refresh(pagamento)
         return pagamento
 
     def buscar_pagamento_por_id(self, id_pagamento: int):
@@ -39,7 +46,7 @@ class PagamentoRepository:
         return resultado.scalars().all()
 
     def buscar_pagamentos_por_data(self, data_pagamento: date):
-        consulta = select(Pagamento).where(Pagamento.data_pagamento == data_pagamento)
+        consulta = select(Pagamento).where(func.date(Pagamento.data_pagamento) == data_pagamento)
 
         resultado = self.db.execute(consulta)
 
@@ -63,7 +70,12 @@ class PagamentoRepository:
         for campo, valor in atualizacao_pagamento.items():
             setattr(pagamento, campo, valor)
 
-        self.db.commit()
-        self.db.refresh(pagamento)
+        try:
+            self.db.commit()
 
+        except IntegrityError:
+            self.db.rollback()
+            raise
+
+        self.db.refresh(pagamento)
         return pagamento

@@ -1,11 +1,12 @@
 from datetime import datetime
 from decimal import Decimal
 from pydantic import BaseModel, Field, ConfigDict
+from typing import Literal
 
 class PagamentoCreate(BaseModel):
-    id_parcela: int
+    id_parcela: int = Field(gt=0)
     valor: Decimal
-    forma_pagamento: str = Field(min_length=3, max_length=50)
+    forma_pagamento: Literal['pix', 'dinheiro', 'cartao_credito', 'cartao_debito', 'transferencia', 'boleto', 'outros']
     observacoes: str | None = Field(default=None, min_length=3, max_length=1000)
 
 class PagamentoUpdate(BaseModel):

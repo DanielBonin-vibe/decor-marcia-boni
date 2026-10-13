@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 
 from app.schemas.item_proposta import ItemPropostaCreate, ItemPropostaUpdate
 from app.models import ItemProposta
@@ -12,9 +13,15 @@ class ItemPropostaRepository:
         item_proposta = ItemProposta(**dados.model_dump())
 
         self.db.add(item_proposta)
-        self.db.commit()
-        self.db.refresh(item_proposta)
 
+        try:
+            self.db.commit()
+
+        except IntegrityError:
+            self.db.rollback()
+            raise
+
+        self.db.refresh(item_proposta)
         return item_proposta
 
     def buscar_item_por_id(self, id_item_proposta: int):
@@ -26,7 +33,7 @@ class ItemPropostaRepository:
 
 
     def buscar_itens_por_proposta(self, id_proposta: int):
-        consulta = select(ItemProposta).where(ItemProposta.id_proposta == id_proposta)
+        consulta = select(ItemProposta).where(ItemProposta.id_proposta == id_proposta).order_by(ItemProposta.ordem)
 
         resultado = self.db.execute(consulta)
 
@@ -57,9 +64,14 @@ class ItemPropostaRepository:
         for campo, valor in atualizacao_item_proposta.items():
             setattr(item_proposta, campo, valor)
 
-        self.db.commit()
-        self.db.refresh(item_proposta)
+        try:
+            self.db.commit()
 
+        except IntegrityError:
+            self.db.rollback()
+            raise
+
+        self.db.refresh(item_proposta)
         return item_proposta
 
     def atualizar_ordem(self, id_item_proposta: int, ordem: int):
@@ -70,9 +82,14 @@ class ItemPropostaRepository:
 
         item_proposta.ordem = ordem
 
-        self.db.commit()
-        self.db.refresh(item_proposta)
+        try:
+            self.db.commit()
 
+        except IntegrityError:
+            self.db.rollback()
+            raise
+
+        self.db.refresh(item_proposta)
         return item_proposta
 
     def atualizar_opcional(self, id_item_proposta: int, opcional: bool):
@@ -83,7 +100,12 @@ class ItemPropostaRepository:
 
         item_proposta.opcional = opcional
 
-        self.db.commit()
-        self.db.refresh(item_proposta)
+        try:
+            self.db.commit()
 
+        except IntegrityError:
+            self.db.rollback()
+            raise
+
+        self.db.refresh(item_proposta)
         return item_proposta

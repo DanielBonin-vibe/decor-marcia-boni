@@ -1,11 +1,18 @@
 from app.schemas.item_proposta import ItemPropostaCreate, ItemPropostaUpdate
 from app.repositories.item_proposta_repository import ItemPropostaRepository
+from app.repositories.proposta_repository import PropostaRepository
 
 class ItemPropostaService:
-    def __init__(self, repository: ItemPropostaRepository):
+    def __init__(self, repository: ItemPropostaRepository, proposta_repository: PropostaRepository):
         self.repository = repository 
+        self.proposta_repository = proposta_repository
 
     def criar_item_proposta(self, dados: ItemPropostaCreate):
+        proposta = self.proposta_repository.buscar_proposta_por_id(dados.id_proposta)
+
+        if proposta is None:
+            raise ValueError('Não foi possível localizar a proposta.')
+
         return self.repository.criar_item_proposta(dados)
 
     def buscar_item_por_id(self, id_item_proposta: int):
@@ -20,15 +27,14 @@ class ItemPropostaService:
         itens_proposta = self.repository.buscar_itens_por_proposta(id_proposta)
 
         if not itens_proposta:
-            raise ValueError('Não foi possível localizar nenhum item da proposta.')
-
+            return []
         return itens_proposta
 
     def buscar_itens_por_categoria(self, categoria: str):
         itens_proposta = self.repository.buscar_itens_por_categoria(categoria)
 
         if not itens_proposta:
-            raise ValueError('Não foi possível localizar nenhum item da proposta.')
+            return []
 
         return itens_proposta
 
@@ -40,6 +46,13 @@ class ItemPropostaService:
         
         if item_proposta is None:
             raise ValueError('Não foi possível localizar nenhum item da proposta.')
+
+
+        if dados.id_propsota is not None:
+            proposta = self.proposta_repository.buscar_proposta_por_id(dados.id_proposta)
+
+            if proposta is None:
+                raise ValueError('Não foi possível localizar a proposta.')
 
         return self.repository.atualizar_item(id_item_proposta, dados)
 

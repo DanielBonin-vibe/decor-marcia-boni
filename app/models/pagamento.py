@@ -1,12 +1,20 @@
 from datetime import datetime, time
 from decimal import Decimal
 
-from sqlalchemy import String, Integer, Numeric, DateTime, Date, Time, ForeignKey, func
+from sqlalchemy import String, Integer, Numeric, DateTime, Date, Time, ForeignKey, func, CheckConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 from app.core.database import Base 
 
 class Pagamento(Base):
     __tablename__ = 'pagamento'
+
+    __table_args__ = (
+
+        CheckConstraint("valor > 0", name='ck_pagamento_valor_valido'),
+
+        CheckConstraint("forma_pagamento IN ('pix', 'dinheiro', 'cartao_credito', 'cartao_debito', 'transferencia', 'boleto', 'outros')", name='ck_pagamento_formas_pagamentos_validas')
+
+    )
 
     id_pagamento: Mapped[int] = mapped_column(primary_key=True)
 
