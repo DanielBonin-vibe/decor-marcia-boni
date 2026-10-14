@@ -70,7 +70,7 @@ class ParcelaService:
 
 
         if parcela.status == 'cancelada':
-                raise ValueError('Não é possível atualizar uma parcela cancelada.')
+            raise ValueError('Não é possível atualizar uma parcela cancelada.')
 
 
         pagamentos = self.pagamento_repository.buscar_pagamentos_por_parcela(id_parcela)

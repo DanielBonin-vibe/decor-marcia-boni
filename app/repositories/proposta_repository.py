@@ -1,8 +1,9 @@
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.schemas import PropostaCreate, PropostaUpdate 
-from app.models import Proposta
+from app.schemas.proposta import PropostaCreate, PropostaUpdate 
+from app.models.proposta import Proposta
 
 class PropostaRepository:
     def __init__(self, db: Session):
@@ -12,9 +13,15 @@ class PropostaRepository:
         proposta = Proposta(**dados.model_dump())
 
         self.db.add(proposta)
-        self.db.commit()
-        self.db.refresh(proposta)
 
+        try:
+            self.db.commit()
+
+        except IntegrityError:
+            self.db.rollback()
+            raise
+
+        self.db.refresh(proposta)
         return proposta
 
     def buscar_proposta_por_id(self, id_proposta: int):
@@ -25,21 +32,25 @@ class PropostaRepository:
         return resultado.scalar_one_or_none()
 
     def buscar_propostas_por_evento(self, id_evento: int):
-        consulta = select(Proposta).where(Proposta.id_evento == id_evento)
+        consulta = select(Proposta).where(Proposta.id_evento == id_evento).order_by(Proposta.versao)
+
 
         resultado = self.db.execute(consulta)
 
         return resultado.scalars().all()
 
     def buscar_propostas_por_status(self, status: str):
-        consulta = select(Proposta).where(Proposta.status == status)
+        consulta = select(Proposta).where(Proposta.status == status).order_by(Proposta.versao)
+
+
 
         resultado = self.db.execute(consulta)
 
         return resultado.scalars().all()
 
     def buscar_proposta_por_evento_e_versao(self, id_evento: int, versao: int):
-        consulta = select(Proposta).where(Proposta.id_evento == id_evento, Proposta.versao == versao)
+        consulta = select(Proposta).where(Proposta.id_evento == id_evento, Proposta.versao == versao).order_by(Proposta.versao)
+
 
         resultado = self.db.execute(consulta)
 
@@ -63,9 +74,14 @@ class PropostaRepository:
         for campo, valor in atualizacao_proposta.items():
             setattr(proposta, campo, valor)
 
-        self.db.commit()
-        self.db.refresh(proposta)
+        try:
+            self.db.commit()
 
+        except IntegrityError:
+            self.db.rollback()
+            raise
+
+        self.db.refresh(proposta)
         return proposta
 
     def atualizar_status_proposta(self, id_proposta: int, status: str):
@@ -76,7 +92,12 @@ class PropostaRepository:
 
         proposta.status = status
 
-        self.db.commit()
-        self.db.refresh(proposta)
+        try:
+            self.db.commit()
 
+        except IntegrityError:
+            self.db.rollback()
+            raise
+
+        self.db.refresh(proposta)
         return proposta
