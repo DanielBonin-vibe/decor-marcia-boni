@@ -1,20 +1,24 @@
 from app.schemas.recibo import ReciboCreate
 from app.repositories.recibo_repository import ReciboRepository
+from app.repositories.pagamento_repository import PagamentoRepository
 
 class ReciboService:
-    def __init__(self, repository: ReciboRepository):
+    def __init__(self, repository: ReciboRepository, pagamento_repository: PagamentoRepository):
         self.repository = repository
+        self.pagamento_repository = pagamento_repository
 
     def criar_recibo(self, dados: ReciboCreate):
-        recibos = self.repository.listar_recibos()
+        recibo = self.repository.buscar_recibo_por_pagamento(dados.id_pagamento)
 
-        if recibos:
-            numero_recibo = max(recibo.numero_recibo for recibo in recibos) + 1
+        if recibo is not None:
+            raise ValueError('Este pagamento já possui um recibo')
 
-        else:
-            numero_recibo + 1
+        pagamento = self.pagamento_repository.buscar_pagamento_por_id(dados.id_pagamento)
 
-        return self.repository.criar_recibo(dados, numero_recibo)
+        if pagamento is None:
+            raise ValueError('Não foi possível localizar o pagamento')
+
+        return self.repository.criar_recibo(dados)
 
     def buscar_recibo_por_id(self, id_recibo: int):
         recibo = self.repository.buscar_recibo_por_id(id_recibo)

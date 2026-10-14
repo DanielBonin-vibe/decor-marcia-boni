@@ -1,19 +1,18 @@
 from datetime import datetime
-
 from pydantic import BaseModel, Field, EmailStr, ConfigDict
-
+from typing import Literal
 
 class UsuarioCreate(BaseModel):
     nome: str = Field(min_length=3, max_length=100)
     email: EmailStr
     senha: str = Field(min_length=8, max_length=100)
-    perfil: str = Field(min_length=3,max_length=100)
+    perfil: Literal['funcionario', 'admin']
 
 class UsuarioUpdate(BaseModel):
     nome: str | None = Field(default=None,min_length=3, max_length=100)
     email: EmailStr | None = None
     senha: str | None = Field(default=None, min_length=8, max_length=100)
-    perfil: str | None = Field(default=None, min_length=3, max_length=100)
+    perfil: Literal['funcionario', 'admin'] | None = None
     ativo: bool | None = None
 
 class UsuarioResponse(BaseModel):

@@ -1,8 +1,8 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-
-from app.schemas import UsuarioCreate, UsuarioUpdate 
-from app.models import Usuario
+from sqlalchemy.exc import IntegrityError
+from app.schemas.usuario import UsuarioCreate, UsuarioUpdate 
+from app.models.usuario import Usuario
 
 class UsuarioRepository:
     def __init__(self, db: Session):
@@ -14,9 +14,15 @@ class UsuarioRepository:
         usuario = Usuario(**dados_usuario, senha_hash=senha_hash, ativo = True)
 
         self.db.add(usuario)
-        self.db.commit()
-        self.db.refresh(usuario)
 
+        try:
+            self.db.commit()
+
+        except IntegrityError:
+            self.db.rollback()
+            raise
+        
+        self.db.refresh(usuario)
         return usuario
 
     def buscar_usuario_por_id(self, id_usuario: int):
@@ -50,10 +56,15 @@ class UsuarioRepository:
 
         for campo, valor in atualizacao_usuario.items():
             setattr(usuario, campo, valor)
+            
+        try:
+            self.db.commit()
 
-        self.db.commit()
+        except IntegrityError:
+            self.db.rollback()
+            raise
+        
         self.db.refresh(usuario)
-
         return usuario
 
     def atualizar_senha(self, id_usuario: int, senha_hash: str):
@@ -64,9 +75,14 @@ class UsuarioRepository:
 
         usuario.senha_hash = senha_hash
 
-        self.db.commit()
-        self.db.refresh(usuario)
+        try:
+            self.db.commit()
 
+        except IntegrityError:
+            self.db.rollback()
+            raise
+        
+        self.db.refresh(usuario)
         return usuario
 
     def atualizar_perfil(self, id_usuario: int, perfil: str):
@@ -77,9 +93,14 @@ class UsuarioRepository:
 
         usuario.perfil = perfil
 
-        self.db.commit()
-        self.db.refresh(usuario)
+        try:
+            self.db.commit()
 
+        except IntegrityError:
+            self.db.rollback()
+            raise
+        
+        self.db.refresh(usuario)
         return usuario
 
     def desativar_usuario(self, id_usuario: int):
@@ -90,9 +111,14 @@ class UsuarioRepository:
 
         usuario.ativo = False
 
-        self.db.commit()
-        self.db.refresh(usuario)
+        try:
+            self.db.commit()
 
+        except IntegrityError:
+            self.db.rollback()
+            raise
+        
+        self.db.refresh(usuario)
         return usuario
 
     def reativar_usuario(self, id_usuario: int):
@@ -102,8 +128,12 @@ class UsuarioRepository:
             return None
 
         usuario.ativo = True
+        try:
+            self.db.commit()
 
-        self.db.commit()
+        except IntegrityError:
+            self.db.rollback()
+            raise
+        
         self.db.refresh(usuario)
-
         return usuario

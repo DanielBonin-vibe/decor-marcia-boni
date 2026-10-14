@@ -1,6 +1,6 @@
 from app.schemas.usuario import UsuarioCreate, UsuarioUpdate
 from app.repositories.usuario_repository import UsuarioRepository
-# from app.security.hash import gerar_hash
+from app.core.security import gerar_hash
 
 class UsuarioService:
     def __init__(self, repository: UsuarioRepository):
@@ -43,11 +43,16 @@ class UsuarioService:
 
         return self.repository.atualizar_usuario(id_usuario, dados)
 
-    def atualizar_senha(self, id_usuario: int, senha_hash: str):
+    def atualizar_senha(self, id_usuario: int, senha: str):
         usuario = self.repository.buscar_usuario_por_id(id_usuario)
 
         if usuario is None:
             raise ValueError('Não foi possível localizar nenhum usuário.')
+
+        if not 8 <= len(senha) <= 100:
+            raise ValueError('A senha deve conter entre 8 e 100 caracteres.')
+
+        senha_hash = gerar_hash(senha)
 
         return self.repository.atualizar_senha(id_usuario, senha_hash)
 
@@ -56,6 +61,12 @@ class UsuarioService:
 
         if usuario is None:
             raise ValueError('Não foi possível localizar nenhum usuário.')
+
+        perfis_validos = ['admin', 'funcionario']
+
+        if perfil not in perfis_validos:
+            raise ValueError('Este perfil não existe.')
+
 
         return self.repository.atualizar_perfil(id_usuario, perfil)
 
