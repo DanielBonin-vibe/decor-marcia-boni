@@ -7,6 +7,8 @@ from app.core.jwt import verificar_token
 from app.repositories.usuario_repository import UsuarioRepository
 from fastapi.security import OAuth2PasswordBearer  # Configura a autenticação por Bearer
 
+from app.models.usuario import Usuario
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")   # indica ao Swagger onde realziar o login ; oauth2_scheme -> Dependência que extrai o token Bearer do cabeçalho das requisições
 
 def get_db() -> Generator[Session, None, None]:
@@ -17,10 +19,6 @@ def get_db() -> Generator[Session, None, None]:
     finally:
         db.close()
 
-
-# Depends(oauth2_scheme) -> Token enviado na requisição
-
-# Depends(get_db) -> Sessão SQLAlchemy para consultar o banco
 
 def get_usuario_atual(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     try:
@@ -49,6 +47,16 @@ def get_usuario_atual(token: str = Depends(oauth2_scheme), db: Session = Depends
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='Credenciais inválidas.',
             headers={'WWW-Authenticate': 'Bearer'}
+        )
+
+    return usuario
+
+
+def exigir_admin(usuario: Usuario = Depends(get_usuario_atual)):
+    if usuario.perfil != 'admin':
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail='Acesso permitido apenas para administradores.'
         )
 
     return usuario

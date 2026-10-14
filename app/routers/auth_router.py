@@ -28,7 +28,7 @@ def login(dados: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(ge
         raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail='E-mail ou senha inválidos.',
-        heards={'WWW-Authenticate': 'Bearer'}
+        headers={'WWW-Authenticate': 'Bearer'}
 
         )
 
