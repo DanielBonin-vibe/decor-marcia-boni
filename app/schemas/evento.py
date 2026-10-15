@@ -40,3 +40,6 @@ class EventoResponse(BaseModel):
     drive_folder_id: str | None
     data_criacao: datetime
     data_atualizacao: datetime
+
+class EventoDriveUpdate(BaseModel):
+    drive_folder_id: str

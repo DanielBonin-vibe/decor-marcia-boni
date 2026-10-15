@@ -50,3 +50,7 @@ class DocumentoResponse(BaseModel):
     drive_url: str | None
 
     data_cadastro: datetime
+
+class DocumentoDriveUpdate(BaseModel):
+    drive_file_id: str
+    drive_url: str
