@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from datetime import date
 from app.schemas.pagamento import PagamentoCreate, PagamentoUpdate
-from app.models import Pagamento
+from app.models.pagamento import Pagamento
 
 class PagamentoRepository:
     def __init__(self, db: Session):

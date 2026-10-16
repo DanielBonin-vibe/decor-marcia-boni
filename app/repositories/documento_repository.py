@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
 from app.schemas.documento import DocumentoCreate, DocumentoUpdate
-from app.models import Documento
+from app.models.documento import Documento
 
 class DocumentoRepository:
     def __init__(self, db: Session):

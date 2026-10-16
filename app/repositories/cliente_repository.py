@@ -1,7 +1,7 @@
 from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 from app.schemas.cliente import ClienteCreate, ClienteUpdate
-from app.models import Cliente
+from app.models.cliente import Cliente
 
 from sqlalchemy.exc import IntegrityError
 

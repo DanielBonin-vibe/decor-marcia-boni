@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from datetime import date
 
 from app.schemas.evento import EventoCreate, EventoUpdate
-from app.models import Evento
+from app.models.evento import Evento
 
 class EventoRepository:
     def __init__(self, db: Session):

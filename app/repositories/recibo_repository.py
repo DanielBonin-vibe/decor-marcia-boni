@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
-from app.schemas.recibo import ReciboCreate, ReciboUpdate 
+from app.schemas.recibo import ReciboCreate 
 from app.models.recibo import Recibo
 
 class ReciboRepository:

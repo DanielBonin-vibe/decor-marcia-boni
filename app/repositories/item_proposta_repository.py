@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
 from app.schemas.item_proposta import ItemPropostaCreate, ItemPropostaUpdate
-from app.models import ItemProposta
+from app.models.item_proposta import ItemProposta
 
 class ItemPropostaRepository:
     def __init__(self, db: Session):

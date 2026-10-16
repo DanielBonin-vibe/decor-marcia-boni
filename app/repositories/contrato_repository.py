@@ -4,7 +4,8 @@ from datetime import datetime
 from sqlalchemy.exc import IntegrityError
 
 from app.schemas.contrato import ContratoCreate, ContratoUpdate
-from app.models import Contrato, Proposta
+from app.models.contrato import Contrato
+from app.models.proposta import Proposta
 
 class ContratoRepository:
     def __init__(self, db: Session):
