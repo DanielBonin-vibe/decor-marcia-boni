@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from app.routers.auth_router import router as auth_router
 from app.routers.usuario_router import router as usuario_router
 from app.routers.cliente_router import router as cliente_router
@@ -10,8 +10,7 @@ from app.routers.pagamento_router import router as pagamento_router
 from app.routers.parcela_router import router as parcela_router
 from app.routers.proposta_router import router as proposta_router
 from app.routers.recibo_router import router as recibo_router
-
-from fastapi.templating import Jinja2Templates
+from app.pages.auth_pages import router as auth_pages_router
 
 app = FastAPI(title='Decor Márcia Boni', 
     description="Sistema de gestão de eventos e automação documental",
@@ -33,12 +32,4 @@ app.include_router(pagamento_router)
 app.include_router(parcela_router)
 app.include_router(proposta_router)
 app.include_router(recibo_router)
-
-templates = Jinja2Templates(directory='app/templates')
-
-@app.get('/login')
-def pagina_login(request: Request):
-    return templates.TemplateResponse(
-        request=request,
-        name='pages/login.html'
-    )
+app.include_router(auth_pages_router)
