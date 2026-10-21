@@ -56,12 +56,27 @@ def processar_login(db: Session = Depends(get_db), username: str = Form(...), pa
         )
 
     response.set_cookie(
-        key="acess_token",
+        key="access_token",
         value=token,
         httponly=True,
         secure=False,
         samesite="lax",
         max_age=1800,
+        path='/'
+    )
+
+    return response
+
+
+@router.post('/logout')
+def logout():
+    response = RedirectResponse(
+        url='/login/',
+        status_code=status.HTTP_303_SEE_OTHER
+    )
+
+    response.delete_cookie(
+        key='access_token',
         path='/'
     )
 

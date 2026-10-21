@@ -25,7 +25,7 @@ def criar_token_acesso(id_usuario: int) -> str:
 
 def verificar_token(token: str) -> int:
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithm=[ALGORITHM], option={'require': ["sub", "exp"]})
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM], options={'require': ["sub", "exp"]})
 
         id_usuario = int(payload['sub'])
 

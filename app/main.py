@@ -11,6 +11,7 @@ from app.routers.parcela_router import router as parcela_router
 from app.routers.proposta_router import router as proposta_router
 from app.routers.recibo_router import router as recibo_router
 from app.pages.auth_pages import router as auth_pages_router
+from app.pages.dashboard_pages import router as dashboard_pages_router
 
 app = FastAPI(title='Decor Márcia Boni', 
     description="Sistema de gestão de eventos e automação documental",
@@ -33,3 +34,4 @@ app.include_router(parcela_router)
 app.include_router(proposta_router)
 app.include_router(recibo_router)
 app.include_router(auth_pages_router)
+app.include_router(dashboard_pages_router)
